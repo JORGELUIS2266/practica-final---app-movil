@@ -1,26 +1,48 @@
 // App.js
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import InicioPantalla from './src/pantallas/InicioPantalla';
-import DetallePantalla from './src/pantallas/DetallePantalla';
-import FormularioAlumnoPantalla from './src/pantallas/FormularioAlumnoPantalla';
-import ColorPantalla from './src/pantallas/ColorPantalla';
-import { Provider as PaperProvider } from 'react-native-paper';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
-const Stack = createNativeStackNavigator();
+import InicioPantalla from "./src/pantallas/InicioPantalla";
+import CambioColor from "./src/botones/cambioColor";
+import Formulario from "./src/pantallas/FormularioAlumnoPantalla";
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Inicio">
-          <Stack.Screen name="Inicio" component={InicioPantalla} />
-          <Stack.Screen name="Detalle" component={DetallePantalla} />
-          <Stack.Screen name="Formulario" component={FormularioAlumnoPantalla} />
-          <Stack.Screen name="Color" component={ColorPantalla} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: "#3498db",
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            height: 60,
+          },
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === "Inicio") {
+              return <Ionicons name="home-outline" size={size} color={color} />;
+            } else if (route.name === "Formulario") {
+              return (
+                <Ionicons name="document-text-outline" size={size} color={color} />
+              );
+            } else if (route.name === "Color") {
+              return (
+                <Ionicons name="color-palette-outline" size={size} color={color} />
+              );
+            }
+          },
+          tabBarActiveTintColor: "#fff",
+          tabBarInactiveTintColor: "#dfe6e9",
+        })}
+      >
+        <Tab.Screen name="Inicio" component={InicioPantalla} />
+        <Tab.Screen name="Formulario" component={Formulario} />
+        <Tab.Screen name="Color" component={CambioColor} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
