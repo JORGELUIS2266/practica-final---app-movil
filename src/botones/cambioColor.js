@@ -2,24 +2,30 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function CambioColor({ navigation }) {
-  const [colorFondo, setColorFondo] = useState("#0A0F2D"); // Fondo oscuro inicial
+export default function CambioColor() {
+  const colores = ["#0A0F2D", "#1B1F4D", "#0A0F2D", "#000000ff", "#0A0F2D", "#000000ff"];
+  const [indice, setIndice] = useState(0);      // Índice actual
+  const [indicePrev, setIndicePrev] = useState(0); // Índice anterior
+  const [colorFondo, setColorFondo] = useState(colores[indice]);
+  const [mensaje, setMensaje] = useState("↔ Igual"); // Estado de incremento/disminución
 
   const cambiarColor = () => {
-    const colores = ["#0A0F2D", "#1B1F4D", "#00F0FF", "#55efc4", "#fab1a0", "#ffeaa7"];
-    const random = Math.floor(Math.random() * colores.length);
-    setColorFondo(colores[random]);
+    const nuevoIndice = Math.floor(Math.random() * colores.length);
+    setIndicePrev(indice);
+    setIndice(nuevoIndice);
+    setColorFondo(colores[nuevoIndice]);
   };
 
-  // useEffect para mostrar mensaje cada vez que colorFondo cambie
+  // UseEffect para mostrar cambios en consola y actualizar mensaje en pantalla
   useEffect(() => {
-    console.log("El color de fondo ha cambiado a:", colorFondo);
-  }, [colorFondo]); // <- Dependencia: se ejecuta cada vez que colorFondo cambie
+    let estado;
+    if (indice > indicePrev) estado = "⬆ Incrementó";
+    else if (indice < indicePrev) estado = "⬇ Disminuyó";
+    else estado = "↔ Igual";
 
-  // useEffect al montar la pantalla (como componentDidMount)
-  useEffect(() => {
-    console.log("Pantalla de CambioColor montada");
-  }, []); // <- array vacío: se ejecuta solo una vez al montar
+    setMensaje(estado);
+    console.log(`useEffect: Color cambiado a ${colorFondo} | Índice: ${indice} | Estado: ${estado}`);
+  }, [colorFondo, indice, indicePrev]);
 
   return (
     <View style={[styles.container, { backgroundColor: colorFondo }]}>
@@ -27,11 +33,17 @@ export default function CambioColor({ navigation }) {
 
       {/* Botón de cambiar color */}
       <TouchableOpacity style={styles.topButton} onPress={cambiarColor}>
-        <Ionicons name="color-palette-outline" size={28} color="#00F0FF" />
+        <Ionicons name="color-palette-outline" size={28} color="#26f1ffff" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Pantalla de Cambio de Color</Text>
+      <Text style={styles.title}>Cambio de Color</Text>
       <Text style={styles.subtitle}>¡Presiona el botón para cambiar el fondo!</Text>
+
+      {/* Contador y estado del índice */}
+      <View style={styles.counterContainer}>
+        <Text style={styles.counterText}>Índice de color: {indice}</Text>
+        <Text style={styles.counterState}>{mensaje}</Text>
+      </View>
     </View>
   );
 }
@@ -44,33 +56,57 @@ const styles = StyleSheet.create({
     padding: 20
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
     color: "#00F0FF",
     textAlign: "center",
-    textShadowColor: "#00F0FF",
+    marginBottom: 8,
+    textShadowColor: "#00a3a3ff",
     textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 10,
-    marginBottom: 10
+    textShadowRadius: 10
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#fff",
     textAlign: "center",
-    marginTop: 5,
-    opacity: 0.8
+    marginBottom: 30,
+    opacity: 0.9
   },
   topButton: {
     position: "absolute",
     top: 50,
     right: 20,
     backgroundColor: "#1B1F4D",
-    padding: 12,
+    padding: 14,
     borderRadius: 50,
-    elevation: 8,
+    elevation: 10,
     shadowColor: "#00F0FF",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.6,
     shadowRadius: 10
   },
+  counterContainer: {
+    marginTop: 20,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5
+  },
+  counterText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5
+  },
+  counterState: {
+    fontSize: 18,
+    color: "#00F0FF",
+    fontWeight: "600"
+  }
 });

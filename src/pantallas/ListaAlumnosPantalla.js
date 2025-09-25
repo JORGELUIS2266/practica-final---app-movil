@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 // URL del backend usando tu IP local
 const API_URL = "http://172.20.76.231:3000/api/alumnos";
@@ -70,6 +71,12 @@ export default function ListaAlumnosPantalla({ navigation }) {
 
       <View style={styles.botones}>
         <TouchableOpacity style={styles.verMas} onPress={() => toggleExpandido(item.id)}>
+          <Ionicons
+            name={expandido === item.id ? "chevron-up-outline" : "chevron-down-outline"}
+            size={18}
+            color="#0A0F2D"
+            style={{ marginRight: 5 }}
+          />
           <Text style={styles.verMasText}>{expandido === item.id ? "Ver menos" : "Ver más"}</Text>
         </TouchableOpacity>
 
@@ -77,10 +84,12 @@ export default function ListaAlumnosPantalla({ navigation }) {
           style={styles.editar} 
           onPress={() => navigation.navigate("Formulario", { alumno: item })}
         >
+          <Ionicons name="create-outline" size={18} color="#fff" style={{ marginRight: 5 }} />
           <Text style={styles.editarText}>Editar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.eliminar} onPress={() => eliminarAlumno(item.id)}>
+          <Ionicons name="trash-outline" size={18} color="#fff" style={{ marginRight: 5 }} />
           <Text style={styles.eliminarText}>Eliminar</Text>
         </TouchableOpacity>
       </View>
@@ -115,10 +124,28 @@ const styles = StyleSheet.create({
   nombre: { fontSize: 18, fontWeight: "600", color: "#00F0FF", marginBottom: 5 },
   info: { color: "#fff", fontSize: 14, marginBottom: 5 },
   botones: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
-  verMas: { backgroundColor: "#00F0FF", padding: 8, borderRadius: 8 },
+  verMas: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    backgroundColor: "#00F0FF", 
+    padding: 8, 
+    borderRadius: 8 
+  },
   verMasText: { color: "#0A0F2D", fontWeight: "600" },
-  editar: { backgroundColor: "#3498db", padding: 8, borderRadius: 8 },
+  editar: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    backgroundColor: "#3498db", 
+    padding: 8, 
+    borderRadius: 8 
+  },
   editarText: { color: "#fff", fontWeight: "600" },
-  eliminar: { backgroundColor: "#FF3B30", padding: 8, borderRadius: 8 },
+  eliminar: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    backgroundColor: "#FF3B30", 
+    padding: 8, 
+    borderRadius: 8 
+  },
   eliminarText: { color: "#fff", fontWeight: "600" },
 });

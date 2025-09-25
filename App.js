@@ -20,9 +20,9 @@ export default function App() {
           screenOptions={({ route }) => ({
             headerShown: false,
             tabBarStyle: {
-              backgroundColor: "#00065cff",
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
+              backgroundColor: "#00032eff",
+              borderTopLeftRadius: 0,
+              borderTopRightRadius: 0,
               height: 60,
             },
             tabBarIcon: ({ color, size }) => {
@@ -36,8 +36,8 @@ export default function App() {
                 return <Ionicons name="color-palette-outline" size={size} color={color} />;
               }
             },
-            tabBarActiveTintColor: "#fff",
-            tabBarInactiveTintColor: "#dfe6e9",
+            tabBarActiveTintColor: "#cea4a4ff",
+            tabBarInactiveTintColor: "#ffffffff",
           })}
         >
           <Tab.Screen name="Inicio" component={InicioPantalla} />

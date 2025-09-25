@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     textAlign: "center",
     marginBottom: 10,
-    textShadowColor: "#00fff7",
+    textShadowColor: "#00a8a3ff",
     textShadowRadius: 15,
   },
   subtitle: {

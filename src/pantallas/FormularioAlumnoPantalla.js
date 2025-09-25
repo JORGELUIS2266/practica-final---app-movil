@@ -123,7 +123,9 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 20, fontWeight: "600", color: "#00F0FF", marginBottom: 15 },
   label: { color: "#00F0FF", fontWeight: "600", marginBottom: 5, fontSize: 14 },
-  input: { borderWidth: 1, borderColor: "#00F0FF", borderRadius: 8, padding: 12, marginBottom: 15, backgroundColor: "#10153D", color: "#fff" },
+  input: { borderWidth: 1, borderColor: "#00F0FF", borderRadius: 8, padding: 12, marginBottom: 15, backgroundColor: "#a2a6c2ff", color: "#fff" },
   button: { backgroundColor: "#00F0FF", padding: 15, borderRadius: 12, alignItems: "center", marginBottom: 30 },
   buttonText: { color: "#0A0F2D", fontSize: 18, fontWeight: "bold" }
+  ,
+  
 });
