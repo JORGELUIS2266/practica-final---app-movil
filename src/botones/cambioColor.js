@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 40, // espacio desde arriba (ajusta según tu notch/status bar)
     right: 20, // espacio desde la derecha
-    backgroundColor: "#3498db",
+    backgroundColor: "#00065cff",
+    
     padding: 10,
     borderRadius: 50,
     elevation: 5, // sombra en Android
