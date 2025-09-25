@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
+
+// URL del backend usando tu IP local
+const API_URL = "http://192.168.1.217:3000/api/alumnos";
 
 export default function ListaAlumnosPantalla({ navigation }) {
   const [alumnos, setAlumnos] = useState([]);
@@ -8,7 +12,7 @@ export default function ListaAlumnosPantalla({ navigation }) {
 
   const cargarAlumnos = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/alumnos");
+      const response = await axios.get(API_URL);
       setAlumnos(response.data);
     } catch (error) {
       console.error(error);
@@ -16,9 +20,12 @@ export default function ListaAlumnosPantalla({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    cargarAlumnos();
-  }, []);
+  // Se ejecuta cada vez que la pantalla gana foco
+  useFocusEffect(
+    useCallback(() => {
+      cargarAlumnos();
+    }, [])
+  );
 
   const eliminarAlumno = (id) => {
     Alert.alert(
@@ -26,15 +33,19 @@ export default function ListaAlumnosPantalla({ navigation }) {
       "¿Deseas eliminar este alumno?",
       [
         { text: "Cancelar", style: "cancel" },
-        { text: "Eliminar", style: "destructive", onPress: async () => {
-          try {
-            await axios.delete(`http://localhost:3000/api/alumnos/${id}`);
-            cargarAlumnos();
-          } catch (error) {
-            console.error(error);
-            Alert.alert("Error", "No se pudo eliminar el alumno");
+        { 
+          text: "Eliminar", 
+          style: "destructive", 
+          onPress: async () => {
+            try {
+              await axios.delete(`${API_URL}/${id}`);
+              cargarAlumnos(); // recargar lista después de eliminar
+            } catch (error) {
+              console.error(error);
+              Alert.alert("Error", "No se pudo eliminar el alumno");
+            }
           }
-        }}
+        }
       ]
     );
   };
@@ -62,7 +73,10 @@ export default function ListaAlumnosPantalla({ navigation }) {
           <Text style={styles.verMasText}>{expandido === item.id ? "Ver menos" : "Ver más"}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.editar} onPress={() => navigation.navigate("Formulario", { alumno: item })}>
+        <TouchableOpacity 
+          style={styles.editar} 
+          onPress={() => navigation.navigate("Formulario", { alumno: item })}
+        >
           <Text style={styles.editarText}>Editar</Text>
         </TouchableOpacity>
 

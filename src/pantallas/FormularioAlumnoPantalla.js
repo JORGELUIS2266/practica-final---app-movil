@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
 import axios from "axios";
 
-export default function FormularioAlumnoPantalla({ route, navigation }) {
-  const alumno = route.params?.alumno; // Si viene desde edición
+const API_URL = "http://192.168.1.217:3000/api/alumnos";
 
+export default function FormularioAlumnoPantalla({ route, navigation }) {
+  const alumnoParam = route.params?.alumno; // Si viene desde edición
+
+  const [alumno, setAlumno] = useState(null); // Alumno en edición
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [numControl, setNumControl] = useState("");
@@ -13,15 +16,30 @@ export default function FormularioAlumnoPantalla({ route, navigation }) {
   const [carrera, setCarrera] = useState("");
 
   useEffect(() => {
-    if (alumno) {
-      setNombre(alumno.nombre);
-      setEmail(alumno.email);
-      setNumControl(alumno.numControl || "");
-      setTelefono(alumno.telefono || "");
-      setSemestre(alumno.semestre || "");
-      setCarrera(alumno.carrera || "");
+    if (alumnoParam) {
+      // Si viene un alumno desde la lista, cargar datos en modo edición
+      setAlumno(alumnoParam);
+      setNombre(alumnoParam.nombre);
+      setEmail(alumnoParam.email);
+      setNumControl(alumnoParam.numControl || "");
+      setTelefono(alumnoParam.telefono || "");
+      setSemestre(alumnoParam.semestre?.toString() || "");
+      setCarrera(alumnoParam.carrera || "");
+    } else {
+      // Modo registro
+      limpiarCampos();
     }
-  }, [alumno]);
+  }, [alumnoParam]);
+
+  const limpiarCampos = () => {
+    setAlumno(null);
+    setNombre("");
+    setEmail("");
+    setNumControl("");
+    setTelefono("");
+    setSemestre("");
+    setCarrera("");
+  };
 
   const enviarFormulario = async () => {
     if (!nombre || !email || !numControl || !telefono || !semestre || !carrera) {
@@ -29,22 +47,31 @@ export default function FormularioAlumnoPantalla({ route, navigation }) {
       return;
     }
 
-    const data = { nombre, email, numControl, telefono, semestre, carrera };
+    const data = {
+      nombre,
+      email,
+      numControl,
+      telefono,
+      semestre: parseInt(semestre),
+      carrera
+    };
 
     try {
       if (alumno) {
         // Edición
-        await axios.put(`http://localhost:3000/api/alumnos/${alumno.id}`, data);
+        await axios.put(`${API_URL}/${alumno.id}`, data);
         Alert.alert("Éxito", "Alumno actualizado correctamente");
       } else {
         // Registro
-        await axios.post("http://localhost:3000/api/alumnos", data);
+        await axios.post(API_URL, data);
         Alert.alert("Éxito", "Alumno registrado correctamente");
       }
 
-      // Limpiar campos
-      setNombre(""); setEmail(""); setNumControl(""); setTelefono(""); setSemestre(""); setCarrera("");
-      navigation.navigate("Lista"); // Volver a la lista
+      // Limpiar campos y regresar a modo registro
+      limpiarCampos();
+
+      // Remover alumno de route params para que no vuelva a modo edición
+      navigation.setParams({ alumno: null });
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "No se pudo enviar el formulario");
