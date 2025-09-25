@@ -21,8 +21,8 @@ export default function App() {
             headerShown: false,
             tabBarStyle: {
               backgroundColor: "#00065cff",
-              borderTopLeftRadius: 2,
-              borderTopRightRadius: 2,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
               height: 60,
             },
             tabBarIcon: ({ color, size }) => {

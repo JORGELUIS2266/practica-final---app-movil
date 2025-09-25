@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://192.168.1.217:3000/api/alumnos";
+const API_URL = "http://172.20.76.231:3000/api/alumnos";
 
 export default function FormularioAlumnoPantalla({ route, navigation }) {
   const alumnoParam = route.params?.alumno; // Si viene desde edición
