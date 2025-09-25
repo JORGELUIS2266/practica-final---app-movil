@@ -1,0 +1,110 @@
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import axios from "axios";
+
+export default function ListaAlumnosPantalla({ navigation }) {
+  const [alumnos, setAlumnos] = useState([]);
+  const [expandido, setExpandido] = useState(null); // id del card expandido
+
+  const cargarAlumnos = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/alumnos");
+      setAlumnos(response.data);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "No se pudieron cargar los alumnos");
+    }
+  };
+
+  useEffect(() => {
+    cargarAlumnos();
+  }, []);
+
+  const eliminarAlumno = (id) => {
+    Alert.alert(
+      "Eliminar Alumno",
+      "¿Deseas eliminar este alumno?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Eliminar", style: "destructive", onPress: async () => {
+          try {
+            await axios.delete(`http://localhost:3000/api/alumnos/${id}`);
+            cargarAlumnos();
+          } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "No se pudo eliminar el alumno");
+          }
+        }}
+      ]
+    );
+  };
+
+  const toggleExpandido = (id) => {
+    setExpandido(expandido === id ? null : id);
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <Text style={styles.nombre}>{item.nombre}</Text>
+      <Text style={styles.info}>No. Control: {item.numControl}</Text>
+
+      {expandido === item.id && (
+        <>
+          <Text style={styles.info}>Email: {item.email}</Text>
+          <Text style={styles.info}>Teléfono: {item.telefono}</Text>
+          <Text style={styles.info}>Semestre: {item.semestre}</Text>
+          <Text style={styles.info}>Carrera: {item.carrera}</Text>
+        </>
+      )}
+
+      <View style={styles.botones}>
+        <TouchableOpacity style={styles.verMas} onPress={() => toggleExpandido(item.id)}>
+          <Text style={styles.verMasText}>{expandido === item.id ? "Ver menos" : "Ver más"}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.editar} onPress={() => navigation.navigate("Formulario", { alumno: item })}>
+          <Text style={styles.editarText}>Editar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.eliminar} onPress={() => eliminarAlumno(item.id)}>
+          <Text style={styles.eliminarText}>Eliminar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={alumnos}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#0A0F2D", padding: 15 },
+  card: {
+    backgroundColor: "#1B1F4D",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#00F0FF",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 8
+  },
+  nombre: { fontSize: 18, fontWeight: "600", color: "#00F0FF", marginBottom: 5 },
+  info: { color: "#fff", fontSize: 14, marginBottom: 5 },
+  botones: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
+  verMas: { backgroundColor: "#00F0FF", padding: 8, borderRadius: 8 },
+  verMasText: { color: "#0A0F2D", fontWeight: "600" },
+  editar: { backgroundColor: "#3498db", padding: 8, borderRadius: 8 },
+  editarText: { color: "#fff", fontWeight: "600" },
+  eliminar: { backgroundColor: "#FF3B30", padding: 8, borderRadius: 8 },
+  eliminarText: { color: "#fff", fontWeight: "600" },
+});

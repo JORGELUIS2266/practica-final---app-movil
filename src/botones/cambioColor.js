@@ -1,26 +1,37 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function CambioColor({ navigation }) {
-  const [colorFondo, setColorFondo] = useState("#f4f6f9");
+  const [colorFondo, setColorFondo] = useState("#0A0F2D"); // Fondo oscuro inicial
 
   const cambiarColor = () => {
-    const colores = ["#f4f6f9", "#ffeaa7", "#fab1a0", "#55efc4", "#81ecec", "#74b9ff"];
+    const colores = ["#0A0F2D", "#1B1F4D", "#00F0FF", "#55efc4", "#fab1a0", "#ffeaa7"];
     const random = Math.floor(Math.random() * colores.length);
     setColorFondo(colores[random]);
   };
 
+  // useEffect para mostrar mensaje cada vez que colorFondo cambie
+  useEffect(() => {
+    console.log("El color de fondo ha cambiado a:", colorFondo);
+  }, [colorFondo]); // <- Dependencia: se ejecuta cada vez que colorFondo cambie
+
+  // useEffect al montar la pantalla (como componentDidMount)
+  useEffect(() => {
+    console.log("Pantalla de CambioColor montada");
+  }, []); // <- array vacío: se ejecuta solo una vez al montar
+
   return (
     <View style={[styles.container, { backgroundColor: colorFondo }]}>
-      {/* Botón de cambiar color arriba a la derecha */}
+      <StatusBar barStyle="light-content" />
+
+      {/* Botón de cambiar color */}
       <TouchableOpacity style={styles.topButton} onPress={cambiarColor}>
-        <Ionicons name="color-palette-outline" size={28} color="#fff" />
+        <Ionicons name="color-palette-outline" size={28} color="#00F0FF" />
       </TouchableOpacity>
 
       <Text style={styles.title}>Pantalla de Cambio de Color</Text>
-
-     
+      <Text style={styles.subtitle}>¡Presiona el botón para cambiar el fondo!</Text>
     </View>
   );
 }
@@ -30,44 +41,36 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: "center", 
     alignItems: "center", 
-    padding: 20 
+    padding: 20
   },
-  title: { 
-    fontSize: 24, 
-    fontWeight: "bold", 
-    marginBottom: 20, 
-    color: "#2c3e50" 
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#00F0FF",
+    textAlign: "center",
+    textShadowColor: "#00F0FF",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 10,
+    marginBottom: 10
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: "center",
+    marginTop: 5,
+    opacity: 0.8
   },
   topButton: {
     position: "absolute",
-    top: 40, // espacio desde arriba (ajusta según tu notch/status bar)
-    right: 20, // espacio desde la derecha
-    backgroundColor: "#00065cff",
-    
-    padding: 10,
+    top: 50,
+    right: 20,
+    backgroundColor: "#1B1F4D",
+    padding: 12,
     borderRadius: 50,
-    elevation: 5, // sombra en Android
-  },
-  navbar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#3498db",
-    paddingVertical: 12,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    elevation: 5, // sombra en Android
-  },
-  navButton: {
-    alignItems: "center",
-  },
-  navText: {
-    color: "#fff",
-    fontSize: 12,
-    marginTop: 3,
+    elevation: 8,
+    shadowColor: "#00F0FF",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 10
   },
 });
