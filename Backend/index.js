@@ -9,6 +9,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Servir archivos estáticos de la carpeta 'uploads' (para imágenes)
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api", routes);
 
 app.listen(3000, () => {

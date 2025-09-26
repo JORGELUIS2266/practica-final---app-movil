@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +21,6 @@ export default function ListaAlumnosPantalla({ navigation }) {
     }
   };
 
-  // Se ejecuta cada vez que la pantalla gana foco
   useFocusEffect(
     useCallback(() => {
       cargarAlumnos();
@@ -40,7 +39,7 @@ export default function ListaAlumnosPantalla({ navigation }) {
           onPress: async () => {
             try {
               await axios.delete(`${API_URL}/${id}`);
-              cargarAlumnos(); // recargar lista después de eliminar
+              cargarAlumnos();
             } catch (error) {
               console.error(error);
               Alert.alert("Error", "No se pudo eliminar el alumno");
@@ -57,6 +56,14 @@ export default function ListaAlumnosPantalla({ navigation }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
+      {/* Imagen del alumno */}
+      {item.imagen ? (
+        <Image
+          source={{ uri: `http://192.168.1.217:3000${item.imagen}` }}
+          style={styles.imagen}
+        />
+      ) : null}
+
       <Text style={styles.nombre}>{item.nombre}</Text>
       <Text style={styles.info}>No. Control: {item.numControl}</Text>
 
@@ -121,8 +128,17 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 8
   },
-  nombre: { fontSize: 18, fontWeight: "600", color: "#00F0FF", marginBottom: 5 },
-  info: { color: "#fff", fontSize: 14, marginBottom: 5 },
+  imagen: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignSelf: "center",
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "#00F0FF"
+  },
+  nombre: { fontSize: 18, fontWeight: "600", color: "#00F0FF", marginBottom: 5, textAlign: "center" },
+  info: { color: "#fff", fontSize: 14, marginBottom: 5, textAlign: "center" },
   botones: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
   verMas: { 
     flexDirection: "row", 
