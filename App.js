@@ -20,30 +20,59 @@ export default function App() {
           screenOptions={({ route }) => ({
             headerShown: false,
             tabBarStyle: {
-              backgroundColor: "#00032eff",
-              borderTopLeftRadius: 0,
-              borderTopRightRadius: 0,
-              height: 60,
+              position: 'absolute',   // posición absoluta
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: '#00042880', // negro semitransparente
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              height: 70,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: -3 },
+              shadowOpacity: 0.3,
+              shadowRadius: 5,
+              elevation: 10,
+              paddingBottom: 10,
+              paddingTop: 5,
             },
             tabBarIcon: ({ color, size }) => {
-              if (route.name === "Inicio") {
-                return <Ionicons name="home-outline" size={size} color={color} />;
-              } else if (route.name === "Formulario") {
-                return <Ionicons name="document-text-outline" size={size} color={color} />;
-              } else if (route.name === "Lista") {
-                return <Ionicons name="list-outline" size={size} color={color} />;
-              } else if (route.name === "Color") {
-                return <Ionicons name="color-palette-outline" size={size} color={color} />;
-              }
+              let iconName;
+              if (route.name === "Inicio") iconName = "home-outline";
+              else if (route.name === "Formulario") iconName = "document-text-outline";
+              else if (route.name === "Lista") iconName = "list-outline";
+              else if (route.name === "Color") iconName = "color-palette-outline";
+
+              return <Ionicons name={iconName} size={28} color={color} />;
             },
-            tabBarActiveTintColor: "#cea4a4ff",
-            tabBarInactiveTintColor: "#ffffffff",
+            tabBarActiveTintColor: "#00fff7", 
+            tabBarInactiveTintColor: "#ffffff80",
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "600",
+            },
           })}
         >
-          <Tab.Screen name="Inicio" component={InicioPantalla} />
-          <Tab.Screen name="Formulario" component={FormularioAlumnoPantalla} />
-          <Tab.Screen name="Lista" component={ListaAlumnosPantalla} />
-          <Tab.Screen name="Color" component={cambioColor} />
+          <Tab.Screen 
+            name="Inicio" 
+            component={InicioPantalla} 
+            options={{ tabBarHideOnKeyboard: true }}
+          />
+          <Tab.Screen 
+            name="Formulario" 
+            component={FormularioAlumnoPantalla} 
+            options={{ tabBarHideOnKeyboard: true }}
+          />
+          <Tab.Screen 
+            name="Lista" 
+            component={ListaAlumnosPantalla} 
+            options={{ tabBarHideOnKeyboard: true }}
+          />
+          <Tab.Screen 
+            name="Color" 
+            component={cambioColor} 
+            options={{ tabBarHideOnKeyboard: true }}
+          />
         </Tab.Navigator>
       </NavigationContainer>
     </AlumnosProvider>

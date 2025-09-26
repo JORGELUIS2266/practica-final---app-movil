@@ -1,5 +1,6 @@
+// src/pantallas/ListaAlumnosPantalla.js
 import React, { useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image, SafeAreaView } from "react-native";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,7 +10,7 @@ const API_URL = "http://192.168.1.217:3000/api/alumnos";
 
 export default function ListaAlumnosPantalla({ navigation }) {
   const [alumnos, setAlumnos] = useState([]);
-  const [expandido, setExpandido] = useState(null); // id del card expandido
+  const [expandido, setExpandido] = useState(null);
 
   const cargarAlumnos = async () => {
     try {
@@ -56,14 +57,12 @@ export default function ListaAlumnosPantalla({ navigation }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      {/* Imagen del alumno */}
-      {item.imagen ? (
+      {item.imagen && (
         <Image
           source={{ uri: `http://192.168.1.217:3000${item.imagen}` }}
           style={styles.imagen}
         />
-      ) : null}
-
+      )}
       <Text style={styles.nombre}>{item.nombre}</Text>
       <Text style={styles.info}>No. Control: {item.numControl}</Text>
 
@@ -104,19 +103,23 @@ export default function ListaAlumnosPantalla({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <Text style={styles.title}>Lista de Alumnos</Text>
       <FlatList
         data={alumnos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        style={styles.container}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0A0F2D", padding: 15 },
+  safeArea: { flex: 1, backgroundColor: "#0A0F2D" },
+  container: { padding: 15 },
+  title: { fontSize: 26, fontWeight: "bold", color: "#00F0FF", textAlign: "center", marginVertical: 15 },
   card: {
     backgroundColor: "#1B1F4D",
     borderRadius: 12,
@@ -126,7 +129,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
-    elevation: 8
+    elevation: 8,
+    // borderWidth: 1, borderColor: "#00F0FF",
   },
   imagen: {
     width: 100,
@@ -140,28 +144,10 @@ const styles = StyleSheet.create({
   nombre: { fontSize: 18, fontWeight: "600", color: "#00F0FF", marginBottom: 5, textAlign: "center" },
   info: { color: "#fff", fontSize: 14, marginBottom: 5, textAlign: "center" },
   botones: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
-  verMas: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    backgroundColor: "#00F0FF", 
-    padding: 8, 
-    borderRadius: 8 
-  },
+  verMas: { flexDirection: "row", alignItems: "center", backgroundColor: "#00F0FF", padding: 8, borderRadius: 8 },
   verMasText: { color: "#0A0F2D", fontWeight: "600" },
-  editar: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    backgroundColor: "#3498db", 
-    padding: 8, 
-    borderRadius: 8 
-  },
+  editar: { flexDirection: "row", alignItems: "center", backgroundColor: "#3498db", padding: 8, borderRadius: 8 },
   editarText: { color: "#fff", fontWeight: "600" },
-  eliminar: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    backgroundColor: "#FF3B30", 
-    padding: 8, 
-    borderRadius: 8 
-  },
+  eliminar: { flexDirection: "row", alignItems: "center", backgroundColor: "#FF3B30", padding: 8, borderRadius: 8 },
   eliminarText: { color: "#fff", fontWeight: "600" },
 });

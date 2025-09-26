@@ -1,7 +1,5 @@
-// src/pantallas/InicioPantalla.js
-import React, { useState } from "react";
-import { Text, View, StyleSheet, Image, ScrollView, Dimensions } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import React, { useState, useRef, useEffect } from "react";
+import { Text, View, StyleSheet, Image, ScrollView, Dimensions, SafeAreaView, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
@@ -15,112 +13,171 @@ export default function InicioPantalla() {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleScroll = (event) => {
-    const index = Math.round(event.nativeEvent.contentOffset.x / (width * 0.9 + width * 0.05 * 2));
-    setActiveIndex(index);
-  };
+  const cardAnim = useRef(new Animated.Value(0)).current;
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Animación de entrada del card
+    Animated.timing(cardAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+    {
+      useNativeDriver: true,
+      listener: (event) => {
+        const index = Math.round(event.nativeEvent.contentOffset.x / (width * 0.9 + width * 0.05 * 2));
+        setActiveIndex(index);
+      }
+    }
+  );
 
   return (
-    <LinearGradient colors={["#000428", "#004e92"]} style={styles.container}>
-      {/* 🔹 Encabezado de bienvenida */}
-      <View style={styles.header}>
-        <Ionicons name="school" size={70} color="#00fff7" style={styles.icon} />
-        <Text style={styles.title}>Bienvenido</Text>
-        <Text style={styles.subtitle}>
-          Esta aplicación te permite registrar alumnos y consultar la información 
-          de los estudiantes del Instituto Tecnológico de Tlaxiaco. 
-          Aquí puedes visualizar los registros y gestionar los datos fácilmente.
-        </Text>
-      </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
 
-      {/* 🔹 Carrusel básico bonito */}
-      <View style={styles.carouselContainer}>
-        <ScrollView
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
+        {/* 🔹 Card de bienvenida con animación */}
+        <Animated.View 
+          style={[
+            styles.card,
+            {
+              opacity: cardAnim,
+              transform: [
+                {
+                  translateY: cardAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [50, 0]  // entra desde abajo
+                  })
+                }
+              ]
+            }
+          ]}
         >
-          {imagenes.map((img, index) => (
-            <Image
-              key={index}
-              source={{ uri: img }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          ))}
-        </ScrollView>
+          <Ionicons name="school" size={70} color="#00fff7" style={styles.icon} />
+          <Text style={styles.title}>Bienvenido</Text>
+          <Text style={styles.subtitle}>
+            Esta aplicación te permite registrar alumnos y consultar la información 
+            de los estudiantes del Instituto Tecnológico de Tlaxiaco. 
+            Aquí puedes visualizar los registros y gestionar los datos fácilmente.
+          </Text>
+        </Animated.View>
 
-        {/* 🔹 Indicadores de página */}
-        <View style={styles.dotsContainer}>
-          {imagenes.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                { backgroundColor: index === activeIndex ? "#00fff7" : "#ffffff50" },
-              ]}
-            />
-          ))}
+        {/* 🔹 Carrusel de imágenes con animación de escala */}
+        <View style={styles.carouselContainer}>
+          <Animated.ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            contentContainerStyle={{ paddingVertical: 10 }}
+          >
+            {imagenes.map((img, index) => {
+              const inputRange = [
+                (index - 1) * width,
+                index * width,
+                (index + 1) * width,
+              ];
+
+              const scale = scrollX.interpolate({
+                inputRange,
+                outputRange: [0.85, 1, 0.85],
+                extrapolate: "clamp"
+              });
+
+              return (
+                <Animated.View key={index} style={[styles.imageWrapper, { transform: [{ scale }] }]}>
+                  <Image
+                    source={{ uri: img }}
+                    style={styles.image}
+                    resizeMode="contain"
+                  />
+                </Animated.View>
+              );
+            })}
+          </Animated.ScrollView>
+
+          {/* 🔹 Indicadores de página con animación */}
+          <View style={styles.dotsContainer}>
+            {imagenes.map((_, index) => {
+              const dotSize = activeIndex === index ? 14 : 10;
+              const dotColor = activeIndex === index ? "#00fff7" : "#00000050";
+              return (
+                <Animated.View
+                  key={index}
+                  style={[styles.dot, { width: dotSize, height: dotSize, backgroundColor: dotColor }]}
+                />
+              );
+            })}
+          </View>
         </View>
       </View>
-    </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: {
+  safeArea: { flex: 1, backgroundColor: "#1B1F4D" },
+  container: { flex: 1, alignItems: "center", backgroundColor: "#1B1F4D", paddingTop: 20 },
+
+  card: {
+    width: "90%",
+    backgroundColor: "rgba(27,31,77,0.95)",
+    borderRadius: 20,
+    padding: 25,
     alignItems: "center",
-    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#00e8f8ff",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 1, borderColor: "#00F0FF",
   },
+  
   icon: {
     marginBottom: 10,
-    textShadowColor: "#00fff7",
+    textShadowColor: "#000000ff",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#ffffff",
-    textAlign: "center",
-    marginBottom: 10,
-    textShadowColor: "#00a8a3ff",
-    textShadowRadius: 15,
-  },
+ title: { fontSize: 26, fontWeight: "bold", color: "#00F0FF", textAlign: "center", marginBottom: 20 },
+
   subtitle: {
     fontSize: 16,
-    color: "#cfd8dc",
+    color: "#00F0FF",
     textAlign: "center",
-    marginBottom: 20,
     lineHeight: 22,
   },
+
   carouselContainer: {
-    flex: 1,
     alignItems: "center",
   },
-  image: {
-    width: width * 0.9,
-    height: 250,
-    borderRadius: 20,
-    marginHorizontal: width * 0.05,
+  imageWrapper: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 5, // para Android
+    elevation: 5,
+    marginHorizontal: width * 0.025,
+  },
+  image: {
+    width: width * 0.9,
+    height: 180,
+    borderRadius: 20,
   },
   dotsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 15,
+    marginTop: 10,
+    marginBottom: 20,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
+    borderRadius: 15,
+    marginHorizontal: 15,
   },
 });
