@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 // URL del backend usando tu IP local
-const API_URL = "http://172.20.76.231:3000/api/alumnos";
+const API_URL = "http://192.168.1.217:3000/api/alumnos";
 
 export default function ListaAlumnosPantalla({ navigation }) {
   const [alumnos, setAlumnos] = useState([]);

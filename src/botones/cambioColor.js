@@ -10,7 +10,7 @@ export default function CambioColor() {
   const [mensaje, setMensaje] = useState("↔ Igual"); // Estado de incremento/disminución
 
   const cambiarColor = () => {
-    const nuevoIndice = Math.floor(Math.random() * colores.length);
+    const nuevoIndice = (indice + 1) % colores.length; // Avanza en orden y regresa al inicio
     setIndicePrev(indice);
     setIndice(nuevoIndice);
     setColorFondo(colores[nuevoIndice]);
@@ -20,7 +20,7 @@ export default function CambioColor() {
   useEffect(() => {
     let estado;
     if (indice > indicePrev) estado = "⬆ Incrementó";
-    else if (indice < indicePrev) estado = "⬇ Disminuyó";
+    else if (indice < indicePrev) estado = "⬇ Disminuyó (reinicio)";
     else estado = "↔ Igual";
 
     setMensaje(estado);
@@ -37,7 +37,7 @@ export default function CambioColor() {
       </TouchableOpacity>
 
       <Text style={styles.title}>Cambio de Color</Text>
-      <Text style={styles.subtitle}>¡Presiona el botón para cambiar el fondo!</Text>
+      <Text style={styles.subtitle}>¡Presiona el botón para cambiar el fondo en orden!</Text>
 
       {/* Contador y estado del índice */}
       <View style={styles.counterContainer}>
