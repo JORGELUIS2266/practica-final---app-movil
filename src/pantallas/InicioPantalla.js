@@ -1,5 +1,5 @@
 // src/pantallas/InicioPantalla.js
-import React from "react";
+import React, { useState } from "react";
 import { Text, View, StyleSheet, Image, ScrollView, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,12 +7,18 @@ import { Ionicons } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 
 export default function InicioPantalla() {
-  // 🔹 Lista de imágenes para el carrusel
   const imagenes = [
     "https://www.tlaxiaco.tecnm.mx/wp-content/uploads/2018/10/yakuin-410x250.png",
-    "https://www.vhv.rs/dpng/d/17-178726_tecnologico-nacional-de-mexico-logo-png-transparent-png.png",
+    "https://www.cdcuauhtemoc.tecnm.mx/wp-content/uploads/2021/08/cropped-6471adb1-bba1-4dbc-851a-5d6cc64f660a-copia.png",
     "https://www.tlaxiaco.tecnm.mx/wp-content/uploads/2018/10/yakuin-410x250.png",
   ];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = (event) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / (width * 0.9 + width * 0.05 * 2));
+    setActiveIndex(index);
+  };
 
   return (
     <LinearGradient colors={["#000428", "#004e92"]} style={styles.container}>
@@ -27,22 +33,37 @@ export default function InicioPantalla() {
         </Text>
       </View>
 
-      {/* 🔹 Carrusel de imágenes */}
+      {/* 🔹 Carrusel básico bonito */}
       <View style={styles.carouselContainer}>
         <ScrollView
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         >
           {imagenes.map((img, index) => (
             <Image
               key={index}
               source={{ uri: img }}
               style={styles.image}
-              resizeMode="contain"
+              resizeMode="cover"
             />
           ))}
         </ScrollView>
+
+        {/* 🔹 Indicadores de página */}
+        <View style={styles.dotsContainer}>
+          {imagenes.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                { backgroundColor: index === activeIndex ? "#00fff7" : "#ffffff50" },
+              ]}
+            />
+          ))}
+        </View>
       </View>
     </LinearGradient>
   );
@@ -81,9 +102,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: width * 0.9, // ocupa casi toda la pantalla
+    width: width * 0.9,
     height: 250,
     borderRadius: 20,
-    marginHorizontal: width * 0.05, // centra un poco la imagen
+    marginHorizontal: width * 0.05,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5, // para Android
+  },
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 15,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
   },
 });
